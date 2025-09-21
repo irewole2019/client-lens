@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Lens - Project File Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            500: '#2563EB',
+                            600: '#1D4ED8',
+                            700: '#1E40AF'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50 font-sans">
+    <!-- @COMPONENT: AppHeader -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-xl font-bold text-slate-900">Client Lens</h1>
+                    </div>
+                    <!-- @STATE: currentView:string = 'projects' -->
+                    <nav class="ml-8 hidden md:block" data-bind="breadcrumbs">
+                        <div class="flex items-center space-x-2 text-sm text-slate-500">
+                            <span>Projects</span>
+                            <i class="fas fa-chevron-right text-xs"></i>
+                            <span class="text-slate-900">All Projects</span>
+                        </div>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-slate-600" data-bind="user.name">User #1</span>
+                    <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
+                        <span class="text-white text-sm font-medium">U</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: AppHeader -->
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- @COMPONENT: ProjectsView -->
+        <div id="projects-view" class="space-y-6">
+            <!-- @COMPONENT: ProjectsHeader -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">My Projects</h2>
+                    <p class="text-slate-600 mt-1">Organize and manage your project files</p>
+                </div>
+                <button 
+                    class="inline-flex items-center px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-lg hover:bg-primary-600 transition-colors duration-200"
+                    data-event="click:createProject"
+                    data-implementation="Should open create project modal">
+                    <i class="fas fa-plus mr-2"></i>
+                    New Project
+                </button>
+            </div>
+            <!-- @END_COMPONENT: ProjectsHeader -->
+
+            <!-- @COMPONENT: ProjectGrid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- @MAP: projects.map(project => ( -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+                     data-event="click:openProject"
+                     data-bind="project.id"
+                     data-mock="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-slate-900" data-bind="project.title">Website Redesign</h3>
+                            <p class="text-sm text-slate-500 mt-1" data-bind="project.createdAt">Created 2 days ago</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full" data-bind="project.fileCount">12 files</span>
+                        </div>
+                    </div>
+                    
+                    <!-- File Preview Thumbnails -->
+                    <div class="flex space-x-2 mb-4">
+                        <!-- A collection of design mockups and wireframes -->
+                        <img src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                             alt="Design mockup preview" 
+                             class="w-12 h-12 rounded-lg object-cover border border-slate-200"
+                             data-mock-image="true" />
+                        <!-- A collection of design mockups and wireframes -->
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                             alt="Design files preview" 
+                             class="w-12 h-12 rounded-lg object-cover border border-slate-200"
+                             data-mock-image="true" />
+                        <div class="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center">
+                            <span class="text-xs text-slate-500">+9</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between text-sm text-slate-500">
+                        <span data-bind="project.lastModified">Updated 1 hour ago</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+                     data-mock="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-slate-900">Mobile App UI</h3>
+                            <p class="text-sm text-slate-500 mt-1">Created 1 week ago</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full">8 files</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2 mb-4">
+                        <!-- Mobile app interface screenshots -->
+                        <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                             alt="Mobile app UI preview" 
+                             class="w-12 h-12 rounded-lg object-cover border border-slate-200"
+                             data-mock-image="true" />
+                        <!-- Mobile app interface screenshots -->
+                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                             alt="App design preview" 
+                             class="w-12 h-12 rounded-lg object-cover border border-slate-200"
+                             data-mock-image="true" />
+                        <div class="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center">
+                            <span class="text-xs text-slate-500">+5</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between text-sm text-slate-500">
+                        <span>Updated 3 days ago</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+                     data-mock="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-slate-900">Brand Guidelines</h3>
+                            <p class="text-sm text-slate-500 mt-1">Created 2 weeks ago</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full">15 files</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2 mb-4">
+                        <!-- Brand guidelines and logos -->
+                        <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                             alt="Brand guidelines preview" 
+                             class="w-12 h-12 rounded-lg object-cover border border-slate-200"
+                             data-mock-image="true" />
+                        <div class="w-12 h-12 rounded-lg bg-red-100 border border-slate-200 flex items-center justify-center">
+                            <i class="fas fa-file-pdf text-red-500"></i>
+                        </div>
+                        <div class="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center">
+                            <span class="text-xs text-slate-500">+12</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between text-sm text-slate-500">
+                        <span>Updated 1 week ago</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+            <!-- @END_COMPONENT: ProjectGrid -->
+
+            <!-- Empty State -->
+            <div class="text-center py-12 hidden" id="empty-state">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-folder-open text-slate-400 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-slate-900 mb-2">No projects yet</h3>
+                <p class="text-slate-500 mb-6">Create your first project to get started</p>
+                <button class="inline-flex items-center px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-lg hover:bg-primary-600 transition-colors duration-200">
+                    <i class="fas fa-plus mr-2"></i>
+                    Create Project
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ProjectsView -->
+
+        <!-- @COMPONENT: ProjectDetailView -->
+        <div id="project-detail-view" class="space-y-6 hidden">
+            <!-- @COMPONENT: ProjectHeader -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <button class="text-slate-400 hover:text-slate-600 transition-colors" data-event="click:backToProjects">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900" data-bind="project.title">Website Redesign</h2>
+                        <p class="text-slate-600 mt-1" data-bind="project.description">Project files and assets</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="text-sm text-slate-500" data-bind="project.fileCount">12 files uploaded</span>
+                    <button 
+                        class="inline-flex items-center px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-lg hover:bg-primary-600 transition-colors duration-200"
+                        data-event="click:openUploadModal"
+                        data-implementation="Should open file upload modal">
+                        <i class="fas fa-upload mr-2"></i>
+                        Upload Files
+                    </button>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: ProjectHeader -->
+
+            <!-- @COMPONENT: FileUploadArea -->
+            <div class="bg-white rounded-xl border-2 border-dashed border-slate-300 p-8 text-center hover:border-primary-500 transition-colors duration-200"
+                 data-implementation="Drop zone for file uploads">
+                <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-cloud-upload-alt text-slate-400 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-slate-900 mb-2">Drop files here to upload</h3>
+                <p class="text-slate-500 mb-4">or click to browse your files</p>
+                <p class="text-xs text-slate-400">Supports images, videos, and PDFs up to 10MB each</p>
+            </div>
+            <!-- @END_COMPONENT: FileUploadArea -->
+
+            <!-- @COMPONENT: FileGrid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <!-- @MAP: files.map(file => ( -->
+                <!-- Image File Card -->
+                <div class="bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-md transition-shadow duration-200 group"
+                     data-bind="file.id"
+                     data-mock="true">
+                    <div class="aspect-square relative">
+                        <!-- A professional headshot photo -->
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300" 
+                             alt="Professional headshot" 
+                             class="w-full h-full object-cover"
+                             data-mock-image="true" />
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex space-x-2">
+                                <button class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-600 hover:text-primary-500">
+                                    <i class="fas fa-eye text-sm"></i>
+                                </button>
+                                <button class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-600 hover:text-red-500">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-sm font-medium text-slate-900 truncate" data-bind="file.name">portrait.jpg</p>
+                        <p class="text-xs text-slate-500" data-bind="file.size">2.4 MB</p>
+                    </div>
+                </div>
+
+                <!-- Video File Card -->
+                <div class="bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-md transition-shadow duration-200 group"
+                     data-mock="true">
+                    <div class="aspect-square relative bg-slate-900 flex items-center justify-center">
+                        <!-- A creative video production setup -->
+                        <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300" 
+                             alt="Video production" 
+                             class="w-full h-full object-cover"
+                             data-mock-image="true" />
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-12 h-12 bg-black bg-opacity-60 rounded-full flex items-center justify-center">
+                                <i class="fas fa-play text-white text-lg ml-1"></i>
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex space-x-2">
+                                <button class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-600 hover:text-primary-500">
+                                    <i class="fas fa-eye text-sm"></i>
+                                </button>
+                                <button class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-600 hover:text-red-500">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-sm font-medium text-slate-900 truncate">demo_video.mp4</p>
+                        <p class="text-xs text-slate-500">15.2 MB</p>
+                    </div>
+                </div>
+
+                <!-- PDF File Card -->
+                <div class="bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-md transition-shadow duration-200 group"
+                     data-mock="true">
+                    <div class="aspect-square relative bg-red-50 flex items-center justify-center">
+                        <i class="fas fa-file-pdf text-red-500 text-4xl"></i>
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex space-x-2">
+                                <button class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-600 hover:text-primary-500">
+                                    <i class="fas fa-eye text-sm"></i>
+                                </button>
+                                <button class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-600 hover:text-red-500">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-sm font-medium text-slate-900 truncate">requirements.pdf</p>
+                        <p class="text-xs text-slate-500">1.8 MB</p>
+                    </div>
+                </div>
+
+                <!-- Another Image Card -->
+                <div class="bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-md transition-shadow duration-200 group"
+                     data-mock="true">
+                    <div class="aspect-square relative">
+                        <!-- A modern workspace design -->
+                        <img src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300" 
+                             alt="Modern workspace" 
+                             class="w-full h-full object-cover"
+                             data-mock-image="true" />
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex space-x-2">
+                                <button class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-600 hover:text-primary-500">
+                                    <i class="fas fa-eye text-sm"></i>
+                                </button>
+                                <button class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-600 hover:text-red-500">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-sm font-medium text-slate-900 truncate">workspace.png</p>
+                        <p class="text-xs text-slate-500">3.1 MB</p>
+                    </div>
+                </div>
+
+                <!-- Loading Card Placeholder -->
+                <div class="bg-white rounded-lg border border-slate-200 overflow-hidden"
+                     data-implementation="Show during file upload">
+                    <div class="aspect-square relative bg-slate-100 flex items-center justify-center">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+                    </div>
+                    <div class="p-3">
+                        <div class="h-4 bg-slate-200 rounded animate-pulse mb-2"></div>
+                        <div class="h-3 bg-slate-200 rounded animate-pulse w-16"></div>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+            <!-- @END_COMPONENT: FileGrid -->
+        </div>
+        <!-- @END_COMPONENT: ProjectDetailView -->
+    </main>
+
+    <!-- @COMPONENT: CreateProjectModal -->
+    <div id="create-project-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden"
+         data-implementation="Modal for creating new projects">
+        <div class="bg-white rounded-xl max-w-md w-full p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-slate-900">Create New Project</h3>
+                <button class="text-slate-400 hover:text-slate-600 transition-colors" data-event="click:closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form class="space-y-4" data-event="submit:createProject">
+                <div>
+                    <label for="project-title" class="block text-sm font-medium text-slate-700 mb-2">Project Title</label>
+                    <input 
+                        type="text" 
+                        id="project-title" 
+                        name="title"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        placeholder="Enter project title"
+                        required
+                        data-bind="form.title">
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button 
+                        type="button" 
+                        class="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors"
+                        data-event="click:closeModal">
+                        Cancel
+                    </button>
+                    <button 
+                        type="submit" 
+                        class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        data-implementation="Should validate and create project">
+                        Create Project
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: CreateProjectModal -->
+
+    <!-- @COMPONENT: FileUploadModal -->
+    <div id="file-upload-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden"
+         data-implementation="File upload modal with drag and drop">
+        <div class="bg-white rounded-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-slate-900">Upload Files</h3>
+                <button class="text-slate-400 hover:text-slate-600 transition-colors" data-event="click:closeUploadModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Drop Zone -->
+            <div class="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center mb-6 hover:border-primary-500 transition-colors"
+                 data-implementation="File drop zone with drag and drop handling">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-cloud-upload-alt text-slate-400 text-2xl"></i>
+                </div>
+                <h4 class="text-lg font-medium text-slate-900 mb-2">Drop files here</h4>
+                <p class="text-slate-500 mb-4">or click to browse and select files</p>
+                <button class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
+                    Browse Files
+                </button>
+                <p class="text-xs text-slate-400 mt-4">Supports JPG, PNG, GIF, MP4, MOV, PDF • Max 10MB per file</p>
+            </div>
+
+            <!-- File Upload Queue -->
+            <div class="space-y-3" data-implementation="Show selected files before upload">
+                <h4 class="text-sm font-medium text-slate-900">Files to upload (3)</h4>
+                
+                <!-- File Item -->
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg" data-mock="true">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-slate-200 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-image text-slate-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-900">design-mockup.jpg</p>
+                            <p class="text-xs text-slate-500">2.4 MB</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-24 bg-slate-200 rounded-full h-2">
+                            <div class="bg-primary-500 h-2 rounded-full" style="width: 75%"></div>
+                        </div>
+                        <span class="text-xs text-slate-500">75%</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg" data-mock="true">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-check text-green-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-900">presentation.pdf</p>
+                            <p class="text-xs text-slate-500">1.8 MB</p>
+                        </div>
+                    </div>
+                    <span class="text-xs text-green-600 font-medium">Uploaded</span>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg" data-mock="true">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-slate-200 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-video text-slate-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-900">demo-video.mp4</p>
+                            <p class="text-xs text-slate-500">15.2 MB</p>
+                        </div>
+                    </div>
+                    <button class="text-slate-400 hover:text-red-500 transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200 mt-6">
+                <button 
+                    type="button" 
+                    class="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors"
+                    data-event="click:closeUploadModal">
+                    Cancel
+                </button>
+                <button 
+                    type="button" 
+                    class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50"
+                    data-implementation="Should upload all selected files">
+                    Upload All Files
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: FileUploadModal -->
+
+    <script>
+        (function() {
+            // TODO: Implement navigation between views, file upload functionality, project CRUD operations
+            // TODO: Add drag and drop file upload with progress tracking
+            // TODO: Implement file preview modal with full-size viewing
+            // TODO: Add file deletion with confirmation
+            // TODO: Implement responsive file grid with lazy loading
+            
+            // View Management
+            const views = {
+                projects: document.getElementById('projects-view'),
+                projectDetail: document.getElementById('project-detail-view')
+            };
+
+            const modals = {
+                createProject: document.getElementById('create-project-modal'),
+                fileUpload: document.getElementById('file-upload-modal')
+            };
+
+            // Simple view switching for demonstration
+            function showView(viewName) {
+                Object.values(views).forEach(view => view.classList.add('hidden'));
+                if (views[viewName]) {
+                    views[viewName].classList.remove('hidden');
+                }
+            }
+
+            function showModal(modalName) {
+                if (modals[modalName]) {
+                    modals[modalName].classList.remove('hidden');
+                }
+            }
+
+            function hideModal(modalName) {
+                if (modals[modalName]) {
+                    modals[modalName].classList.add('hidden');
+                }
+            }
+
+            // Event delegation for demo interactions
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('[data-event]');
+                if (!target) return;
+
+                const event = target.getAttribute('data-event');
+                
+                switch(event) {
+                    case 'click:createProject':
+                        showModal('createProject');
+                        break;
+                    case 'click:openProject':
+                        showView('projectDetail');
+                        break;
+                    case 'click:backToProjects':
+                        showView('projects');
+                        break;
+                    case 'click:openUploadModal':
+                        showModal('fileUpload');
+                        break;
+                    case 'click:closeModal':
+                        hideModal('createProject');
+                        break;
+                    case 'click:closeUploadModal':
+                        hideModal('fileUpload');
+                        break;
+                }
+            });
+
+            // Initialize with projects view
+            showView('projects');
+        })();
+    </script>
+</body>
+</html>
