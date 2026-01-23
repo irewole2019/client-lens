@@ -146,13 +146,62 @@
 
 ## Implementation Order (This Week)
 
-1. **Shareable links verification** - Ensure `/p/:publicId` and `/f/:publicId` work end-to-end
-2. **Image-only restriction** - Remove video/PDF uploads, keep images only
-3. **Image comment verification** - Test pin placement, threading, persistence on mobile
-4. **Comment sidebar polish** - Add timestamps, better sorting, mobile drawer
-5. **Error handling** - Missing projects, invalid links, load failures
-6. **Mobile testing** - Full responsive testing on iOS/Android
-7. **Final QA** - Demo run-through with real feedback flow
+Onboarding & Implementation Plan (step-by-step)
+
+1. Onboard the repo locally
+  - Install deps: `npm ci` or `npm install`
+  - Copy `.env.example` → `.env` and paste your Neon `DATABASE_URL`
+  - Confirm DB connection: `npx tsx server/test-connection.ts` (already done)
+
+2. Apply DB schema (migrations)
+  - Run: `npx drizzle-kit push` (or `npm run db:push`)
+  - Confirm required tables exist in your Neon project
+
+3. Seed demo data (recommended)
+  - Add a small seed script (`server/seed.ts`) to insert a demo user, project and one sample image record
+  - Run locally to create a testable project for UI checks
+
+4. Start local dev server
+  - `npm run dev` — open `http://localhost:5000`
+  - Confirm API routes and client load correctly
+
+5. Smoke-test core API routes
+  - Example checks:
+    - `GET /api/projects`
+    - `GET /api/projects/:id/files`
+    - `GET /api/files/:publicId`
+    - `POST /api/files/:fileId/comments`
+
+6. Verify public shareable pages
+  - Test `/p/:publicId` (project view) and `/f/:publicId` (file view)
+  - Ensure clients can leave comments without auth (name/email only)
+
+7. Enforce image-only uploads for MVP
+  - Frontend: update `client/src/components/ObjectUploader.tsx` to restrict file types
+  - Backend: add validation in upload routes to reject non-image MIME types
+
+8. Validate image comment flow end-to-end
+  - Place pins on images, add comments, confirm DB persistence and that pins appear on reload
+  - Test threaded replies
+
+9. UI polish and mobile behavior
+  - Improve comment sidebar (timestamps, sorting, clear empty state)
+  - Make sidebar a drawer on small screens
+  - Test touch pin placement on phones
+
+10. Remove or hide video/PDF features for MVP
+   - Remove upload buttons and UI components related to `VideoWithComments` and `PDFWithComments`
+
+11. Add error handling and UX states
+   - Missing project / invalid publicId
+   - Image load failures
+   - Friendly messages for comment submission errors
+
+12. Final QA & launch checklist
+   - Verify checklist items in the MVP Launchability Checklist
+   - Demo end-to-end flow with a sample project
+
+Next step suggestion: I can create `server/seed.ts` and the seed data, then run migrations locally (I won't run commands in your terminal). Tell me if you want the seed script added now or prefer to run migrations first.
 
 ---
 
