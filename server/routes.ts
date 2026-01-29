@@ -107,7 +107,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Projects API with comment statistics
   app.get("/api/projects", async (req, res) => {
     try {
-      const userId = "user-1"; // Hardcoded user
+      const userId = (req.query.userId as string) || "user-1"; // From query param, default to user-1
       const projectsWithStats = await storage.getProjectsWithCommentStats(userId);
       res.json(projectsWithStats);
     } catch (error) {
@@ -134,7 +134,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Mark project as viewed
   app.post("/api/projects/:id/viewed", async (req, res) => {
     try {
-      const userId = "user-1"; // Hardcoded user
+      const userId = (req.query.userId as string) || "user-1"; // From query param, default to user-1
       const projectId = req.params.id;
       
       await storage.updateProjectView(userId, projectId);
@@ -148,7 +148,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/projects", async (req, res) => {
     try {
       const data = insertProjectSchema.parse(req.body);
-      const userId = "user-1"; // Hardcoded user
+      const userId = (req.query.userId as string) || "user-1"; // From query param, default to user-1
       const project = await storage.createProject({ ...data, userId });
       res.status(201).json(project);
     } catch (error) {

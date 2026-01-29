@@ -110,6 +110,15 @@
 
 ### PRIORITY 3: Future (Post-MVP, Next Sprint)
 
+#### Password Hashing & Security
+- **Status**: Passwords currently stored in plain text
+- **Needs**: 
+  - Install bcrypt or argon2
+  - Hash passwords on user creation (seed script and signup)
+  - Compare hashed passwords on login
+  - Update seed script to use hashed password
+- **Notes**: Essential before any production deployment; needed for multi-user auth
+
 #### User Authentication & Authorization
 - **Status**: Hardcoded to "user-1"
 - **Notes**: Add when scaling to multi-user; not needed for internal MVP

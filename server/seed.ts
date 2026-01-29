@@ -14,8 +14,8 @@ import { eq } from "drizzle-orm";
 
 async function seed() {
   try {
-    // 1. Create or retrieve demo user
-    const username = "demo";
+    // 1. Create or retrieve hardcoded user (matches default userId in routes)
+    const username = "user-1";
     const [existingUser] = await db
       .select()
       .from(users)
