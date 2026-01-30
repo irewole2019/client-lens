@@ -6,12 +6,17 @@
 
 **Launch Target**: Last week of March 2026
 
-**Initial Target Users**:
+**Primary Target User (MVP Focus)**: **Event Planners**
+- Multiple vendors per event (florists, caterers, decorators, photographers)
+- Multiple deliverables per vendor (mood boards, seating charts, menus, venue layouts)
+- Clients who aren't designers — need simple, visual feedback
+- Tight timelines with revision rounds
+
+**Secondary Target Users** (Post-MVP):
 - Graphic Designers
 - 3D Visualizers
 - Interior Designers
 - Video Editors
-- Small Events Planners
 - Branding/Marketing Consultants
 
 **Core Problem**: Service providers face disorganized, vague, and scattered feedback across multiple platforms. This leads to confusion, revision delays, scope creep, and poor client experience — especially in cross-border projects with language barriers.
@@ -53,7 +58,28 @@
 ### PRIORITY 1: MVP Critical (Must Have for Launch) ⭐⭐⭐
 **Feasibility: High — 1-2 days each**
 
-#### 1. Enforce Images-Only Uploads
+#### 1. Project Folders (Organization) — NEW
+- **Status**: Not implemented
+- **Effort**: 1-2 days
+- **Why**: Event planners manage multiple events ("Smith Wedding", "Johnson Gala"). Need to group projects.
+- **Tasks**:
+  - Add `folders` table to schema (id, userId, name, createdAt)
+  - Add `folderId` column to `projects` table (nullable)
+  - Create folder CRUD API routes
+  - Update dashboard UI to show folders with nested projects
+  - Allow creating/renaming/deleting folders
+  - Support "Unfiled" projects (no folder)
+
+#### 2. Tag Editing UI (Approval Workflow) — MOVED UP
+- **Status**: Tags exist in DB, no UI
+- **Effort**: 4-6 hours
+- **Why**: Event planners need to track "approved" vs "pending" items per vendor.
+- **Tasks**:
+  - Add dropdown to change tag (To Do / In Progress / Resolved)
+  - Visual indicator of tag status in sidebar (color/icon)
+  - Show progress indicator per project ("3/5 items resolved")
+
+#### 3. Enforce Images-Only Uploads
 - **Status**: Video/PDF support partially implemented, needs cleanup
 - **Effort**: 2-4 hours
 - **Tasks**:
@@ -63,7 +89,7 @@
   - Set validation to accept images only (.jpg, .png, .gif, .webp)
   - Backend: Restrict MIME types in upload routes
 
-#### 2. Comment Sidebar Polish
+#### 4. Comment Sidebar Polish
 - **Status**: Sidebar exists, needs UX improvements
 - **Effort**: 4-6 hours
 - **Tasks**:
@@ -72,7 +98,7 @@
   - Clear "no comments yet" empty state
   - Mobile-friendly sidebar (drawer on mobile)
 
-#### 3. Verify Core Flow End-to-End
+#### 5. Verify Core Flow End-to-End
 - **Status**: Needs QA pass
 - **Effort**: 2-3 hours
 - **Tasks**:
@@ -84,7 +110,7 @@
 ### PRIORITY 2: MVP Polish (Should Have) ⭐⭐
 **Feasibility: Medium — 1-3 days each**
 
-#### 4. Mobile Responsiveness
+#### 6. Mobile Responsiveness
 - **Status**: Partial implementation
 - **Effort**: 1-2 days
 - **Tasks**:
@@ -93,7 +119,7 @@
   - Responsive image container
   - Touch-friendly pin placement
 
-#### 5. Error Handling & Edge Cases
+#### 7. Error Handling & Edge Cases
 - **Status**: Needs implementation
 - **Effort**: 4-6 hours
 - **Tasks**:
@@ -102,7 +128,7 @@
   - Handle image load failures
   - Friendly error messages for comment submission failures
 
-#### 6. Fix Build/Runtime Errors
+#### 8. Fix Build/Runtime Errors
 - **Status**: Needs review
 - **Effort**: 2-4 hours
 - **Tasks**:
@@ -113,7 +139,7 @@
 ### PRIORITY 3: MVP Nice-to-Have (Could Have) ⭐
 **Feasibility: Medium — requires new integration**
 
-#### 7. AI Translation
+#### 9. AI Translation
 - **Status**: Not implemented
 - **Effort**: 1-2 days
 - **Tasks**:
@@ -122,7 +148,7 @@
   - Add language preference setting
 - **Notes**: Differentiator for cross-border clients
 
-#### 8. AI Feedback Summary
+#### 10. AI Feedback Summary
 - **Status**: Not implemented
 - **Effort**: 1-2 days
 - **Tasks**:
@@ -130,20 +156,13 @@
   - Highlight key action items
 - **Notes**: High-value feature for busy providers
 
-#### 9. Light Branding (Logo + Color)
+#### 11. Light Branding (Logo + Color)
 - **Status**: Not implemented
 - **Effort**: 1 day
 - **Tasks**:
   - Allow provider to upload logo for public pages
   - Allow accent color customization
   - Display branding on `/p/:publicId` pages
-
-#### 10. Comment Tag Editing UI
-- **Status**: Tags exist in DB, no UI
-- **Effort**: 4-6 hours
-- **Tasks**:
-  - Add dropdown to change tag (To Do / In Progress / Resolved)
-  - Visual indicator of tag status in sidebar
 
 ---
 
@@ -162,6 +181,25 @@
 | Slack/Notion Integration | Team workflow integrations |
 | Analytics Dashboard | Usage stats for providers |
 | Team/Agency Workspaces | Multi-user collaboration |
+| 3D Model Feedback | Upload .glb/.gltf, rotate + comment in 3D space — major differentiator for 3D visualizers |
+| Hero 3D Animation | Three.js landing page polish — marketing appeal |
+
+---
+
+## Future Feature: 3D Model Feedback (v1.1 / Pro Tier)
+
+**Why**: 3D Visualizers currently export 2D renders and lose spatial context. ClientLens could let clients rotate the actual model and comment in 3D space.
+
+**Value**: "The only feedback tool where clients can comment directly on your 3D models."
+
+**Technical Prep** (can do now without derailing MVP):
+- Schema already supports different file types
+- Add `positionZ` to comments table for 3D coordinates
+- Accept `model/gltf-binary` MIME type
+- Use Three.js + React Three Fiber for viewer
+- Raycasting for pin placement on model surface
+
+**Effort**: 1-2 weeks when ready
 
 ---
 
@@ -202,6 +240,8 @@ Before sharing with users, verify:
 - [ ] Loading states + error messages clear
 - [ ] Video/PDF uploads hidden (images only)
 - [ ] Timestamps visible on comments
+- [ ] Project folders working
+- [ ] Tag editing functional
 
 ---
 
