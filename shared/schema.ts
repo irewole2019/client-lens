@@ -9,11 +9,19 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
 });
 
+export const folders = pgTable("folders", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const projects = pgTable("projects", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   publicId: varchar("public_id").notNull().unique().default(sql`gen_random_uuid()`),
   title: text("title").notNull(),
   userId: varchar("user_id").notNull(),
+  folderId: varchar("folder_id"), // nullable - projects can be unfiled
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -59,8 +67,13 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
 });
 
+export const insertFolderSchema = createInsertSchema(folders).pick({
+  name: true,
+});
+
 export const insertProjectSchema = createInsertSchema(projects).pick({
   title: true,
+  folderId: true,
 });
 
 export const insertFileSchema = createInsertSchema(files).pick({
@@ -92,6 +105,8 @@ export const insertProjectViewSchema = createInsertSchema(projectViews).pick({
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+export type InsertFolder = z.infer<typeof insertFolderSchema>;
+export type Folder = typeof folders.$inferSelect;
 export type InsertProject = z.infer<typeof insertProjectSchema>;
 export type Project = typeof projects.$inferSelect;
 export type InsertFile = z.infer<typeof insertFileSchema>;

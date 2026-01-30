@@ -1,4 +1,4 @@
-import { users, projects, files, comments, projectViews, type User, type InsertUser, type Project, type InsertProject, type File, type InsertFile, type Comment, type InsertComment, type ProjectView, type InsertProjectView } from "@shared/schema";
+import { users, projects, files, comments, projectViews, folders, type User, type InsertUser, type Project, type InsertProject, type File, type InsertFile, type Comment, type InsertComment, type ProjectView, type InsertProjectView, type Folder, type InsertFolder } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql, and } from "drizzle-orm";
 
@@ -6,6 +6,12 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  
+  getFolder(id: string): Promise<Folder | undefined>;
+  getFoldersByUserId(userId: string): Promise<Folder[]>;
+  createFolder(folder: InsertFolder & { userId: string }): Promise<Folder>;
+  updateFolder(id: string, updates: Partial<Folder>): Promise<Folder>;
+  deleteFolder(id: string): Promise<void>;
   
   getProject(id: string): Promise<Project | undefined>;
   getProjectByPublicId(publicId: string): Promise<Project | undefined>;
@@ -68,6 +74,44 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  // Folder operations
+  async getFolder(id: string): Promise<Folder | undefined> {
+    const [folder] = await db.select().from(folders).where(eq(folders.id, id));
+    return folder || undefined;
+  }
+
+  async getFoldersByUserId(userId: string): Promise<Folder[]> {
+    return await db.select().from(folders).where(eq(folders.userId, userId)).orderBy(desc(folders.createdAt));
+  }
+
+  async createFolder(insertFolder: InsertFolder & { userId: string }): Promise<Folder> {
+    const [folder] = await db
+      .insert(folders)
+      .values(insertFolder)
+      .returning();
+    return folder;
+  }
+
+  async updateFolder(id: string, updates: Partial<Folder>): Promise<Folder> {
+    const [folder] = await db
+      .update(folders)
+      .set(updates)
+      .where(eq(folders.id, id))
+      .returning();
+    if (!folder) {
+      throw new Error("Folder not found");
+    }
+    return folder;
+  }
+
+  async deleteFolder(id: string): Promise<void> {
+    // First, unassign all projects from this folder
+    await db.update(projects).set({ folderId: null }).where(eq(projects.folderId, id));
+    // Then delete the folder
+    await db.delete(folders).where(eq(folders.id, id));
+  }
+
+  // Project operations
   async getProject(id: string): Promise<Project | undefined> {
     const [project] = await db.select().from(projects).where(eq(projects.id, id));
     return project || undefined;
