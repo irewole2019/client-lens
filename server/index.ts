@@ -1,11 +1,16 @@
 import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
+import path from "path";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Serve local images for seeded demo content
+const localImagesDir = path.resolve(import.meta.dirname, "..", "images");
+app.use("/images", express.static(localImagesDir));
 
 app.use((req, res, next) => {
   const start = Date.now();

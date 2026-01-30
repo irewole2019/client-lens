@@ -90,6 +90,14 @@
 
 ### PRIORITY 2: Polish for Launch ⭐⭐
 
+#### 5. Fix Errors
+- **Status**: Needs review
+- **Spec**: Eliminate runtime and build errors for a smooth dev/prod experience
+- **Needs**:
+  - Identify current startup/build errors
+  - Resolve dependency or tooling issues (e.g., `cross-env`, tsx/esbuild spawn)
+  - Verify `npm run dev` and `npm run build` succeed
+
 #### 5. Basic Error Handling & Edge Cases
 - **Status**: Needs testing
 - **Spec**: Graceful failures, user-friendly messages

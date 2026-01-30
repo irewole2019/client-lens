@@ -1,4 +1,6 @@
 import "dotenv/config";
+import fs from "fs";
+import path from "path";
 import { db, pool } from "./db";
 import {
   users,
@@ -39,19 +41,56 @@ async function seed() {
       .returning();
     console.log("✓ Created demo project:", insertedProject.publicId);
 
+    // Resolve local images directory (default to ../images)
+    const imagesDir =
+      process.env.SEED_IMAGES_DIR ||
+      path.resolve(import.meta.dirname, "..", "images");
+
+    if (!fs.existsSync(imagesDir)) {
+      throw new Error(
+        `Images directory not found at ${imagesDir}. Create it or set SEED_IMAGES_DIR.`,
+      );
+    }
+
+    const imageFiles = fs
+      .readdirSync(imagesDir)
+      .filter((file) => /\.(png|jpe?g|gif|webp)$/i.test(file));
+
+    if (imageFiles.length === 0) {
+      throw new Error(
+        `No image files found in ${imagesDir}. Add some images (png/jpg/jpeg/gif/webp).`,
+      );
+    }
+
+    const imageFileName = imageFiles[0];
+    const imagePath = `/images/${imageFileName}`;
+
+    // Basic mime type inference from extension
+    const ext = imageFileName.split(".").pop()?.toLowerCase();
+    const mimeTypeMap: Record<string, string> = {
+      png: "image/png",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      gif: "image/gif",
+      webp: "image/webp",
+    };
+    const inferredMimeType = ext && mimeTypeMap[ext] ? mimeTypeMap[ext] : "image/png";
+
+    const stats = fs.statSync(path.join(imagesDir, imageFileName));
+
     // 3. Create demo image file
     const [insertedFile] = await db
       .insert(files)
       .values({
         projectId: insertedProject.id,
         name: "Demo Image",
-        originalName: "demo.png",
-        mimeType: "image/png",
-        size: "123456",
-        objectPath: "https://via.placeholder.com/1200x800.png",
+        originalName: imageFileName,
+        mimeType: inferredMimeType,
+        size: String(stats.size),
+        objectPath: imagePath,
       })
       .returning();
-    console.log("✓ Created demo file:", insertedFile.publicId);
+    console.log("✓ Created demo file:", insertedFile.publicId, "=>", imagePath);
 
     // 4. Create root comments at different pin locations
     const [rootComment] = await db
