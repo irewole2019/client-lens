@@ -1,224 +1,190 @@
-# ClientLens MVP - Status & TODO
+# ClientLens MVP — Status & TODO
 
 ## Project Context
 
-**Vision**: ClientLens is a feedback tool for freelancers and creative service providers to collect clear, contextual client feedback via shareable links.
+**Vision**: ClientLens is a feedback tool for freelancers and creative service providers to collect clear, contextual client feedback via shareable links. It eliminates scattered communication across WhatsApp, email, and voice notes by offering a simple link where clients can leave contextual comments.
 
 **Launch Target**: Last week of March 2026
 
-**MVP Scope (PRIORITY)**: 
-- Internal tool (single-user, no auth required yet)
-- Generate shareable links for projects
-- **Image comments only** (click-to-comment with pins)
-- Clients can leave comments (name/email prompted)
-- Simple comment viewing for provider
+**Initial Target Users**:
+- Graphic Designers
+- 3D Visualizers
+- Interior Designers
+- Video Editors
+- Small Events Planners
+- Branding/Marketing Consultants
 
-**Future Scope** (Post-MVP):
-- Videos with timestamp comments
-- PDFs with page comments
-- Multi-user auth & workspaces
-- AI translation & summaries
-- Light branding (logo/color)
-- Pricing tiers
+**Core Problem**: Service providers face disorganized, vague, and scattered feedback across multiple platforms. This leads to confusion, revision delays, scope creep, and poor client experience — especially in cross-border projects with language barriers.
 
-**Core Problem Solved**: Service providers receive disorganized feedback scattered across WhatsApp, email, and voice notes. ClientLens centralizes feedback in one simple, shareable link.
+**Deployment**: https://project-forge-iakande1.replit.app/
 
 ---
 
-## What's Working ✅
+## Current Progress: ~50-60% Complete
 
-### Core Features
-- **Project management** - Create, view, delete projects with dashboard
-- **File uploads** - Images with object storage
-- **Shareable links** - Public URLs via `/p/:publicId` (project) and `/f/:publicId` (file)
-- **Click-to-comment on images** - Position-based pins with visual markers
-- **Client identity prompt** - Name/email captured before commenting
-- **Threaded replies** - Parent/child comment relationships
-- **Comment sidebar** - View all comments with navigation to pins
+### ✅ Done (Working)
 
-### Tech Stack
-- **Frontend**: React + TypeScript + TailwindCSS + Shadcn/ui
-- **Backend**: Node.js + Express + TypeScript
-- **Database**: PostgreSQL (Neon) via Drizzle ORM
-- **File Storage**: Google Cloud Storage
-- **Deployment**: Replit (https://project-forge-iakande1.replit.app/)
+| Feature | Status |
+|---------|--------|
+| Project management | Create, view, delete projects with dashboard |
+| Image uploads | Working with local storage + GCS wired |
+| Shareable links | `/p/:publicId` (project) and `/f/:publicId` (file) |
+| Click-to-comment on images | Position-based pins with visual markers |
+| Client identity prompt | Name/email captured before commenting |
+| Threaded replies | Parent/child comment relationships |
+| Comment sidebar | View all comments with navigation to pins |
+| Comment status tagging | "To Do", "In Progress", "Resolved" in DB schema |
+| Multi-user seed data | Mario, Sonic, Vanitas projects with comments |
+| Tech stack | React + TailwindCSS + Express + PostgreSQL (Neon) |
+
+### 🟡 Partial / Needs Verification
+
+| Feature | Notes |
+|---------|-------|
+| Video timestamp comments | Schema supports it, UI partially implemented but hidden for MVP |
+| PDF page comments | Schema supports it, UI partially implemented but hidden for MVP |
+| Mobile responsiveness | Needs testing on actual devices |
+| Comment tag editing UI | Tags exist in DB but no UI to change them yet |
 
 ---
 
-## What's Missing ❌
+## What's Missing
 
-### PRIORITY 1: MVP Launchable (Images + Shareable Links) ⭐⭐⭐
+### PRIORITY 1: MVP Critical (Must Have for Launch) ⭐⭐⭐
+**Feasibility: High — 1-2 days each**
 
-#### 1. Shareable Links - Fully Working ⭐ TOP PRIORITY
-- **Status**: Partially working (`/p/:publicId` and `/f/:publicId` routes exist)
-- **Spec**: Public links work without authentication, clients can view project + leave comments
-- **Needs**:
-  - Verify `/p/:publicId` loads project page with images
-  - Verify `/f/:publicId` loads individual image with comment UI
-  - Ensure client can comment without login (name/email only)
-  - Test link generation and copying
-
-#### 2. Image Comments (Core MVP Feature) ⭐ TOP PRIORITY
-- **Status**: Click-to-comment on images exists, needs verification
-- **Spec**: Clients click image → add pin → comment appears + saves to DB
-- **Needs**:
-  - Verify pins display correctly on image
-  - Verify comment threads work on public page
-  - Verify comments persist in database
-  - Test on mobile (clients likely on phones)
-  - Responsive image container
-
-#### 3. Comment Viewing for Provider ⭐ TOP PRIORITY
-- **Status**: Comment sidebar exists, needs polish
-- **Spec**: Provider can see all comments + client names + navigate to pins
-- **Needs**:
-  - Verify sidebar loads all comments for a project
-  - Add timestamps to comments
-  - Sort comments by recency or by image
-  - Clear "no comments yet" state
-  - Mobile-friendly sidebar (drawer on mobile)
-
-#### 4. Clean Up Multi-Media Support (Remove for Now) ⭐ TOP PRIORITY
-- **Status**: Video and PDF support partially implemented, need to remove for MVP
-- **Spec**: For MVP, disable/remove video + PDF uploads and commenting
-- **Needs**:
+#### 1. Enforce Images-Only Uploads
+- **Status**: Video/PDF support partially implemented, needs cleanup
+- **Effort**: 2-4 hours
+- **Tasks**:
   - Remove video upload option from ObjectUploader
   - Remove PDF upload option from ObjectUploader
-  - Hide/remove VideoWithComments, PDFWithComments from project page
-  - Set validation to accept **images only** (.jpg, .png, .gif, .webp)
-  - Backend: Restrict file types in validation
+  - Hide/remove VideoWithComments, PDFWithComments components
+  - Set validation to accept images only (.jpg, .png, .gif, .webp)
+  - Backend: Restrict MIME types in upload routes
 
-### PRIORITY 2: Polish for Launch ⭐⭐
+#### 2. Comment Sidebar Polish
+- **Status**: Sidebar exists, needs UX improvements
+- **Effort**: 4-6 hours
+- **Tasks**:
+  - Add timestamps to comments (display createdAt)
+  - Sort comments by recency or by image
+  - Clear "no comments yet" empty state
+  - Mobile-friendly sidebar (drawer on mobile)
 
-#### 5. Fix Errors
-- **Status**: Needs review
-- **Spec**: Eliminate runtime and build errors for a smooth dev/prod experience
-- **Needs**:
-  - Identify current startup/build errors
-  - Resolve dependency or tooling issues (e.g., `cross-env`, tsx/esbuild spawn)
-  - Verify `npm run dev` and `npm run build` succeed
+#### 3. Verify Core Flow End-to-End
+- **Status**: Needs QA pass
+- **Effort**: 2-3 hours
+- **Tasks**:
+  - Verify `/p/:publicId` loads project with images
+  - Verify `/f/:publicId` loads single image with comment UI
+  - Confirm pins display correctly and persist on reload
+  - Test link generation and copying
 
-#### 5. Basic Error Handling & Edge Cases
-- **Status**: Needs testing
-- **Spec**: Graceful failures, user-friendly messages
-- **Needs**:
-  - Handle missing/deleted projects gracefully
-  - Handle invalid share links
-  - Show "no comments" state
-  - Handle image load failures
+### PRIORITY 2: MVP Polish (Should Have) ⭐⭐
+**Feasibility: Medium — 1-3 days each**
 
-#### 6. Mobile Responsiveness
-- **Status**: Partial
-- **Spec**: Works perfectly on mobile (clients will access via phone)
-- **Needs**:
+#### 4. Mobile Responsiveness
+- **Status**: Partial implementation
+- **Effort**: 1-2 days
+- **Tasks**:
   - Test on iPhone/Android browsers
-  - Responsive comment sidebar (drawer on mobile)
+  - Responsive comment sidebar (drawer on small screens)
   - Responsive image container
   - Touch-friendly pin placement
 
-### PRIORITY 3: Future (Post-MVP, Next Sprint)
+#### 5. Error Handling & Edge Cases
+- **Status**: Needs implementation
+- **Effort**: 4-6 hours
+- **Tasks**:
+  - Handle missing/deleted projects gracefully (404 page)
+  - Handle invalid share links
+  - Handle image load failures
+  - Friendly error messages for comment submission failures
 
-#### Password Hashing & Security
-- **Status**: Passwords currently stored in plain text
-- **Needs**: 
-  - Install bcrypt or argon2
-  - Hash passwords on user creation (seed script and signup)
-  - Compare hashed passwords on login
-  - Update seed script to use hashed password
-- **Notes**: Essential before any production deployment; needed for multi-user auth
+#### 6. Fix Build/Runtime Errors
+- **Status**: Needs review
+- **Effort**: 2-4 hours
+- **Tasks**:
+  - Verify `npm run dev` runs without errors
+  - Verify `npm run build` succeeds
+  - Resolve any dependency or tooling issues
 
-#### User Authentication & Authorization
-- **Status**: Hardcoded to "user-1"
-- **Notes**: Add when scaling to multi-user; not needed for internal MVP
+### PRIORITY 3: MVP Nice-to-Have (Could Have) ⭐
+**Feasibility: Medium — requires new integration**
 
-#### AI Translation
+#### 7. AI Translation
 - **Status**: Not implemented
-- **Notes**: Post-MVP differentiator for cross-border clients
+- **Effort**: 1-2 days
+- **Tasks**:
+  - Integrate OpenAI API (GPT-4o)
+  - Translate comments to provider's preferred language
+  - Add language preference setting
+- **Notes**: Differentiator for cross-border clients
 
-#### AI Feedback Summary
+#### 8. AI Feedback Summary
 - **Status**: Not implemented
-- **Notes**: Post-MVP high-value feature
+- **Effort**: 1-2 days
+- **Tasks**:
+  - Generate project-level summary of all feedback
+  - Highlight key action items
+- **Notes**: High-value feature for busy providers
 
-#### Comment Tag Editing
-- **Status**: Tags in DB but no UI
-- **Notes**: Post-MVP enhancement
-
-#### Light Branding (Logo + Color)
+#### 9. Light Branding (Logo + Color)
 - **Status**: Not implemented
-- **Notes**: Post-MVP polish for public pages
+- **Effort**: 1 day
+- **Tasks**:
+  - Allow provider to upload logo for public pages
+  - Allow accent color customization
+  - Display branding on `/p/:publicId` pages
 
-#### Video & PDF Support
-- **Status**: Partially implemented, remove for MVP
-- **Notes**: Add after image MVP is solid
-
-#### Email Notifications
-- **Status**: Not implemented
-- **Notes**: Retention feature, post-MVP
-
-#### Custom Domains & White-Labeling
-- **Status**: Not implemented
-- **Notes**: Pro tier feature, post-MVP
+#### 10. Comment Tag Editing UI
+- **Status**: Tags exist in DB, no UI
+- **Effort**: 4-6 hours
+- **Tasks**:
+  - Add dropdown to change tag (To Do / In Progress / Resolved)
+  - Visual indicator of tag status in sidebar
 
 ---
 
-## Implementation Order (This Week)
+## PRIORITY 4: Post-MVP (Future Sprints)
+**Feasibility: Lower priority — build after launch**
 
-Onboarding & Implementation Plan (step-by-step)
+| Feature | Notes |
+|---------|-------|
+| Password Hashing | Essential before production multi-user (bcrypt/argon2) |
+| User Authentication | Currently hardcoded; add for multi-user |
+| Video & PDF Support | Re-enable after image MVP is solid |
+| Email Notifications | Retention feature (Resend integration) |
+| Custom Domains | Pro tier feature |
+| White-Labeling | Full branding per project |
+| PDF Export | Export feedback as PDF |
+| Slack/Notion Integration | Team workflow integrations |
+| Analytics Dashboard | Usage stats for providers |
+| Team/Agency Workspaces | Multi-user collaboration |
 
-1. Onboard the repo locally
-  - Install deps: `npm ci` or `npm install`
-  - Copy `.env.example` → `.env` and paste your Neon `DATABASE_URL`
-  - Confirm DB connection: `npx tsx server/test-connection.ts` (already done)
+---
 
-2. Apply DB schema (migrations)
-  - Run: `npx drizzle-kit push` (or `npm run db:push`)
-  - Confirm required tables exist in your Neon project
+## Tech Stack
 
-3. Seed demo data (recommended)
-  - Add a small seed script (`server/seed.ts`) to insert a demo user, project and one sample image record
-  - Run locally to create a testable project for UI checks
+- **Frontend**: React + TypeScript + TailwindCSS + Shadcn/ui
+- **Backend**: Node.js + Express + TypeScript
+- **Database**: PostgreSQL (Neon) via Drizzle ORM
+- **File Storage**: Google Cloud Storage (local `/images` for dev)
+- **AI**: OpenAI API (GPT-4o) — planned
+- **Deployment**: Replit
 
-4. Start local dev server
-  - `npm run dev` — open `http://localhost:5000`
-  - Confirm API routes and client load correctly
+---
 
-5. Smoke-test core API routes
-  - Example checks:
-    - `GET /api/projects`
-    - `GET /api/projects/:id/files`
-    - `GET /api/files/:publicId`
-    - `POST /api/files/:fileId/comments`
+## Pricing Strategy (Post-MVP)
 
-6. Verify public shareable pages
-  - Test `/p/:publicId` (project view) and `/f/:publicId` (file view)
-  - Ensure clients can leave comments without auth (name/email only)
-
-7. Enforce image-only uploads for MVP
-  - Frontend: update `client/src/components/ObjectUploader.tsx` to restrict file types
-  - Backend: add validation in upload routes to reject non-image MIME types
-
-8. Validate image comment flow end-to-end
-  - Place pins on images, add comments, confirm DB persistence and that pins appear on reload
-  - Test threaded replies
-
-9. UI polish and mobile behavior
-  - Improve comment sidebar (timestamps, sorting, clear empty state)
-  - Make sidebar a drawer on small screens
-  - Test touch pin placement on phones
-
-10. Remove or hide video/PDF features for MVP
-   - Remove upload buttons and UI components related to `VideoWithComments` and `PDFWithComments`
-
-11. Add error handling and UX states
-   - Missing project / invalid publicId
-   - Image load failures
-   - Friendly messages for comment submission errors
-
-12. Final QA & launch checklist
-   - Verify checklist items in the MVP Launchability Checklist
-   - Demo end-to-end flow with a sample project
-
-Next step suggestion: I can create `server/seed.ts` and the seed data, then run migrations locally (I won't run commands in your terminal). Tell me if you want the seed script added now or prefer to run migrations first.
+| Tier | Price | Features |
+|------|-------|----------|
+| Starter | $0/mo | 3 projects, platform branding |
+| Pro | $15/mo | Unlimited projects, 20 AI credits, logo + color, 2 PDF exports |
+| Elite | $29/mo | Unlimited AI, full white-label, custom domain, unlimited exports |
+| Studio | $99/mo | 5 users, shared workspace, all Elite features |
+| Agency Pro | $199/mo | 15 users, branded portals, Slack/Notion, analytics |
 
 ---
 
@@ -235,3 +201,20 @@ Before sharing with users, verify:
 - [ ] Demo project has sample comments visible
 - [ ] Loading states + error messages clear
 - [ ] Video/PDF uploads hidden (images only)
+- [ ] Timestamps visible on comments
+
+---
+
+## Quick Start (Dev Onboarding)
+
+1. Install deps: `npm install`
+2. Copy `.env.example` → `.env` (add Neon `DATABASE_URL`)
+3. Push schema: `npm run db:push`
+4. Seed data: `npx tsx server/seed.ts`
+5. Run dev: `npm run dev` → http://localhost:5000
+
+**Seeded Users**:
+- `mario-designer` — owns "Mario Feedback Board" (3 Mario images)
+- `client-two` — owns "Sonic Campaign" + "Vanitas Lookbook" (3 images each)
+
+All passwords: `demo-password`
