@@ -41,7 +41,7 @@
 | Comment status tagging | "To Do", "In Progress", "Resolved" in DB schema |
 | Multi-user seed data | Mario, Sonic, Vanitas projects with comments |
 | Tech stack | React + TailwindCSS + Express + PostgreSQL (Neon) |
-| Folders backend | Schema, storage, API routes complete |
+| Folders | Full CRUD backend + dashboard UI (create, rename, delete, group projects) |
 
 ### 🟡 Partial / Needs Verification
 
@@ -59,22 +59,20 @@
 ### PRIORITY 1: MVP Critical (Must Have for Launch) ⭐⭐⭐
 **Feasibility: High — 1-2 days each**
 
-#### 1. Project Folders (Organization) — IN PROGRESS
-- **Status**: Backend complete, frontend pending
-- **Effort**: 4-6 hours remaining (frontend)
-- **Why**: Event planners manage multiple events ("Smith Wedding", "Johnson Gala"). Need to group projects.
+#### 1. Project Folders (Organization) — ✅ DONE
+- **Status**: Complete (backend + frontend)
 - **Done**:
   - ✅ Add `folders` table to schema (id, userId, name, createdAt)
   - ✅ Add `folderId` column to `projects` table (nullable)
   - ✅ Create folder CRUD API routes (GET, POST, PATCH, DELETE)
   - ✅ Storage layer with folder operations
-- **Remaining**:
-  - Update dashboard UI to show folders with nested projects
-  - Allow creating/renaming/deleting folders (UI)
-  - Move project to folder (dropdown or drag)
-  - Support "Unfiled" projects (no folder)
+  - ✅ Dashboard UI: collapsible folders with nested projects
+  - ✅ Create/rename/delete folders (UI)
+  - ✅ "Unfiled" section for projects without folder
+- **Remaining (nice-to-have)**:
+  - Move existing project to folder (dropdown in project detail)
 
-#### 2. Tag Editing UI (Approval Workflow) — MOVED UP
+#### 2. Tag Editing UI (Approval Workflow)
 - **Status**: Tags exist in DB, no UI
 - **Effort**: 4-6 hours
 - **Why**: Event planners need to track "approved" vs "pending" items per vendor.
