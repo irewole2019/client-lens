@@ -41,6 +41,7 @@
 | Comment status tagging | "To Do", "In Progress", "Resolved" in DB schema |
 | Multi-user seed data | Mario, Sonic, Vanitas projects with comments |
 | Tech stack | React + TailwindCSS + Express + PostgreSQL (Neon) |
+| Folders backend | Schema, storage, API routes complete |
 
 ### 🟡 Partial / Needs Verification
 
@@ -58,16 +59,19 @@
 ### PRIORITY 1: MVP Critical (Must Have for Launch) ⭐⭐⭐
 **Feasibility: High — 1-2 days each**
 
-#### 1. Project Folders (Organization) — NEW
-- **Status**: Not implemented
-- **Effort**: 1-2 days
+#### 1. Project Folders (Organization) — IN PROGRESS
+- **Status**: Backend complete, frontend pending
+- **Effort**: 4-6 hours remaining (frontend)
 - **Why**: Event planners manage multiple events ("Smith Wedding", "Johnson Gala"). Need to group projects.
-- **Tasks**:
-  - Add `folders` table to schema (id, userId, name, createdAt)
-  - Add `folderId` column to `projects` table (nullable)
-  - Create folder CRUD API routes
+- **Done**:
+  - ✅ Add `folders` table to schema (id, userId, name, createdAt)
+  - ✅ Add `folderId` column to `projects` table (nullable)
+  - ✅ Create folder CRUD API routes (GET, POST, PATCH, DELETE)
+  - ✅ Storage layer with folder operations
+- **Remaining**:
   - Update dashboard UI to show folders with nested projects
-  - Allow creating/renaming/deleting folders
+  - Allow creating/renaming/deleting folders (UI)
+  - Move project to folder (dropdown or drag)
   - Support "Unfiled" projects (no folder)
 
 #### 2. Tag Editing UI (Approval Workflow) — MOVED UP
