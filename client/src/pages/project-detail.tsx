@@ -2,8 +2,15 @@ import { useState, useCallback, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Upload, CloudUpload, Eye, Trash2, Share, ExternalLink } from "lucide-react";
+import { ArrowLeft, Upload, CloudUpload, Eye, Trash2, Share, ExternalLink, Folder } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { ProjectWithFiles, FileRecord, getFileType, formatFileSize, formatTimeAgo } from "@/lib/types";
@@ -24,6 +31,10 @@ export default function ProjectDetail() {
   const { data: project, isLoading } = useQuery<ProjectWithFiles>({
     queryKey: ["/api/projects", projectId],
     enabled: !!projectId,
+  });
+
+  const { data: folders = [] } = useQuery<{ id: string; name: string }[]>({
+    queryKey: ["/api/folders"],
   });
 
   const createFileMutation = useMutation({
@@ -69,6 +80,30 @@ export default function ProjectDetail() {
       toast({
         title: "Error",
         description: "Failed to delete file. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateProjectFolder = useMutation({
+    mutationFn: async (folderId: string | null) => {
+      const response = await apiRequest("PATCH", `/api/projects/${projectId}`, {
+        folderId: folderId,
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/projects", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
+      toast({
+        title: "Folder updated",
+        description: "Project moved to selected folder.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update project folder.",
         variant: "destructive",
       });
     },
@@ -336,7 +371,25 @@ export default function ProjectDetail() {
             </Link>
             <div>
               <h2 className="text-2xl font-bold text-slate-900">{project.title}</h2>
-              <p className="text-slate-600 mt-1">Project files and assets</p>
+              <div className="flex items-center gap-3 mt-2">
+                <Folder className="h-4 w-4 text-slate-400" />
+                <Select 
+                  value={project.folderId || "unfiled"}
+                  onValueChange={(value) => updateProjectFolder.mutate(value === "unfiled" ? null : value)}
+                >
+                  <SelectTrigger className="h-8 w-[200px] text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unfiled">Unfiled</SelectItem>
+                    {folders.map((folder) => (
+                      <SelectItem key={folder.id} value={folder.id}>
+                        {folder.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
           <div className="flex items-center space-x-3">

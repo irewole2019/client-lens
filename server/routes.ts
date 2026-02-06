@@ -202,6 +202,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/projects/:id", async (req, res) => {
+    try {
+      const { folderId } = req.body;
+      const project = await storage.updateProject(req.params.id, { folderId });
+      res.json(project);
+    } catch (error) {
+      console.error("Error updating project:", error);
+      res.status(500).json({ error: "Failed to update project" });
+    }
+  });
+
   app.delete("/api/projects/:id", async (req, res) => {
     try {
       await storage.deleteProject(req.params.id);

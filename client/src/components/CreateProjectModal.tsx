@@ -1,9 +1,16 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
@@ -26,13 +33,25 @@ interface UploadedFile {
   preview?: string;
 }
 
+interface Folder {
+  id: string;
+  userId: string;
+  name: string;
+  createdAt: string;
+}
+
 export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProjectModalProps) {
   const [step, setStep] = useState(1);
   const [title, setTitle] = useState("");
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const { data: folders = [] } = useQuery<Folder[]>({
+    queryKey: ["/api/folders"],
+  });
 
   const createProjectMutation = useMutation({
     mutationFn: async (data: { title: string; files: UploadedFile[] }) => {
@@ -40,7 +59,7 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
       const projectResponse = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: data.title }),
+        body: JSON.stringify({ title: data.title, folderId: data.folderId }),
       });
       
       if (!projectResponse.ok) throw new Error("Failed to create project");
@@ -118,6 +137,7 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
   const resetModal = () => {
     setStep(1);
     setTitle("");
+    setSelectedFolderId(null);
     setUploadedFiles([]);
     setUploading(false);
     onOpenChange(false);
@@ -191,6 +211,29 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
                 placeholder="Enter your project name"
                 autoFocus
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="folder">Folder (Optional)</Label>
+              <Select 
+                value={selectedFolderId || "unfiled"} 
+                onValueChange={(value) => setSelectedFolderId(value === "unfiled" ? null : value)}
+              >
+                <SelectTrigger id="folder">
+                  <SelectValue placeholder="Select a folder" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="unfiled">Unfiled</SelectItem>
+                  {folders.map((folder) => (
+                    <SelectItem key={folder.id} value={folder.id}>
+                      {folder.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Organize your project into a folder
+              </p>
             </div>
 
             <div className="flex justify-end space-x-2">
@@ -284,7 +327,7 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
                 Cancel
               </Button>
               <Button 
-                onClick={() => createProjectMutation.mutate({ title, files: uploadedFiles })}
+                onClick={() => createProjectMutation.mutate({ title, folderId: selectedFolderId, files: uploadedFiles })}
                 disabled={!canCreateProject || createProjectMutation.isPending}
                 className="flex items-center space-x-2"
               >
