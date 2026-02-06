@@ -1,27 +1,23 @@
-# ClientLens MVP — Status & TODO
+# ClientLens — Development Roadmap
 
-## Project Context
+## Vision
+ClientLens is a feedback tool for freelancers and creative service providers to collect clear, contextual client feedback via shareable links. Like Google Docs for visual feedback.
 
-**Vision**: ClientLens is a feedback tool for freelancers and creative service providers to collect clear, contextual client feedback via shareable links. It eliminates scattered communication across WhatsApp, email, and voice notes by offering a simple link where clients can leave contextual comments.
-
-**Launch Target**: Last week of March 2026
-
-**Primary Target User (MVP Focus)**: **Event Planners**
-- Multiple vendors per event (florists, caterers, decorators, photographers)
-- Multiple deliverables per vendor (mood boards, seating charts, menus, venue layouts)
-- Clients who aren't designers — need simple, visual feedback
-- Tight timelines with revision rounds
-
-**Secondary Target Users** (Post-MVP):
-- Graphic Designers
-- 3D Visualizers
-- Interior Designers
-- Video Editors
-- Branding/Marketing Consultants
-
-**Core Problem**: Service providers face disorganized, vague, and scattered feedback across multiple platforms. This leads to confusion, revision delays, scope creep, and poor client experience — especially in cross-border projects with language barriers.
-
+**Launch Target**: Last week of March 2026  
 **Deployment**: https://project-forge-iakande1.replit.app/
+
+**Primary Users (MVP)**: Event Planners  
+**Future Users**: Graphic Designers, 3D Visualizers, Video Editors, Artists
+
+---
+
+## Organization Model
+Keep it simple: **Folders → Projects → Files → Comments**
+
+Users organize however they want:
+- One folder per client
+- One folder per event
+- One folder per project type
 
 ---
 
@@ -60,7 +56,7 @@
 **Feasibility: High — 1-2 days each**
 
 #### 1. Project Folders (Organization) — ✅ DONE
-- **Status**: Complete (backend + frontend)
+- **Status**: 100% Complete (backend + frontend)
 - **Done**:
   - ✅ Add `folders` table to schema (id, userId, name, createdAt)
   - ✅ Add `folderId` column to `projects` table (nullable)
@@ -69,8 +65,9 @@
   - ✅ Dashboard UI: collapsible folders with nested projects
   - ✅ Create/rename/delete folders (UI)
   - ✅ "Unfiled" section for projects without folder
-- **Remaining (nice-to-have)**:
-  - Move existing project to folder (dropdown in project detail)
+  - ✅ Assign folder when creating new project (dropdown in create modal)
+  - ✅ Move existing project to folder (dropdown in project detail page)
+  - ✅ PATCH endpoint for updating project folder
 
 #### 2. Tag Editing UI (Approval Workflow)
 - **Status**: Tags exist in DB, no UI
@@ -168,40 +165,45 @@
 
 ---
 
-## PRIORITY 4: Post-MVP (Future Sprints)
-**Feasibility: Lower priority — build after launch**
-
-| Feature | Notes |
-|---------|-------|
-| Password Hashing | Essential before production multi-user (bcrypt/argon2) |
-| User Authentication | Currently hardcoded; add for multi-user |
-| Video & PDF Support | Re-enable after image MVP is solid |
-| Email Notifications | Retention feature (Resend integration) |
-| Custom Domains | Pro tier feature |
-| White-Labeling | Full branding per project |
-| PDF Export | Export feedback as PDF |
-| Slack/Notion Integration | Team workflow integrations |
-| Analytics Dashboard | Usage stats for providers |
-| Team/Agency Workspaces | Multi-user collaboration |
-| 3D Model Feedback | Upload .glb/.gltf, rotate + comment in 3D space — major differentiator for 3D visualizers |
-| Hero 3D Animation | Three.js landing page polish — marketing appeal |
-
 ---
 
-## Future Feature: 3D Model Feedback (v1.1 / Pro Tier)
+# Growth Roadmap (Post-MVP)
 
-**Why**: 3D Visualizers currently export 2D renders and lose spatial context. ClientLens could let clients rotate the actual model and comment in 3D space.
+## Phase 2: Stability & Security (April 2026)
+- Password hashing (bcrypt/argon2)
+- Proper user authentication (replace hardcoded)
+- Rate limiting
+- Input sanitization
+- Error logging & monitoring
 
-**Value**: "The only feedback tool where clients can comment directly on your 3D models."
+## Phase 3: Organization & UX (May 2026)
+- Search projects by name
+- Filter projects by folder
+- Drag-drop reorder files within project
+- Archive/trash for old projects
+- Duplicate project (copy as template)
+- Bulk move projects to folder
 
-**Technical Prep** (can do now without derailing MVP):
-- Schema already supports different file types
-- Add `positionZ` to comments table for 3D coordinates
-- Accept `model/gltf-binary` MIME type
-- Use Three.js + React Three Fiber for viewer
-- Raycasting for pin placement on model surface
+## Phase 4: Collaboration (June 2026)
+- Email notifications (new comment alerts via Resend)
+- @mentions in comments
+- Real-time updates (WebSocket for live comments)
+- Comment reactions (✓ 👍 ❓)
 
-**Effort**: 1-2 weeks when ready
+## Phase 5: Artist Features (Q3 2026)
+- Re-enable Video support (timestamp comments)
+- Re-enable PDF support (page comments)
+- Drawing/annotation tools on images
+- Version history (track revisions)
+- Before/after comparison slider
+
+## Phase 6: Pro Features (Q4 2026)
+- 3D model feedback (.glb/.gltf with Three.js)
+- Team/agency workspaces
+- White-labeling & custom domains
+- Slack/Notion integrations
+- Analytics dashboard
+- PDF export of feedback
 
 ---
 
@@ -218,13 +220,11 @@
 
 ## Pricing Strategy (Post-MVP)
 
-| Tier | Price | Features |
-|------|-------|----------|
-| Starter | $0/mo | 3 projects, platform branding |
-| Pro | $15/mo | Unlimited projects, 20 AI credits, logo + color, 2 PDF exports |
-| Elite | $29/mo | Unlimited AI, full white-label, custom domain, unlimited exports |
-| Studio | $99/mo | 5 users, shared workspace, all Elite features |
-| Agency Pro | $199/mo | 15 users, branded portals, Slack/Notion, analytics |
+**Starter** — $0/mo: 3 projects, platform branding  
+**Pro** — $15/mo: Unlimited projects, 20 AI credits, logo + color  
+**Elite** — $29/mo: Unlimited AI, white-label, custom domain  
+**Studio** — $99/mo: 5 users, shared workspace  
+**Agency** — $199/mo: 15 users, branded portals, integrations
 
 ---
 
