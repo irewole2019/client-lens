@@ -1,9 +1,17 @@
 import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { MessageCircle, Clock, Reply } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MessageCircle, Clock, Reply, CheckCircle2, Circle, Clock as ClockIcon } from "lucide-react";
+import { queryClient } from "@/lib/queryClient";
 import { formatDistanceToNow } from "date-fns";
 import { buildCommentTree, type CommentWithReplies } from "@/lib/commentUtils";
 
@@ -25,6 +33,22 @@ export function ThreadedCommentList({
   onReply 
 }: ThreadedCommentListProps) {
   
+  const updateCommentTag = useMutation({
+    mutationFn: async ({ commentId, tag }: { commentId: string; tag: string }) => {
+      const response = await fetch(`/api/comments/${commentId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tag }),
+      });
+      if (!response.ok) throw new Error("Failed to update comment tag");
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comments", fileId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
+    },
+  });
+  
   // Build the comment tree from flat array
   const commentTree = buildCommentTree(comments);
   
@@ -39,6 +63,15 @@ export function ThreadedCommentList({
       case "In Progress": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
       case "Resolved": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
       default: return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
+    }
+  };
+
+  const getStatusIcon = (tag: string) => {
+    switch (tag) {
+      case "To Do": return <Circle className="w-3 h-3" />;
+      case "In Progress": return <ClockIcon className="w-3 h-3" />;
+      case "Resolved": return <CheckCircle2 className="w-3 h-3" />;
+      default: return <Circle className="w-3 h-3" />;
     }
   };
 
@@ -75,9 +108,43 @@ export function ThreadedCommentList({
                   {pinNumber}
                 </div>
               )}
-              <Badge variant="secondary" className={getStatusColor(comment.tag)}>
-                {comment.tag}
-              </Badge>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                  <Button variant="ghost" size="sm" className={`h-6 px-2 ${getStatusColor(comment.tag)}`}>
+                    {getStatusIcon(comment.tag)}
+                    <span className="ml-1 text-xs">{comment.tag}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" onClick={(e) => e.stopPropagation()}>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateCommentTag.mutate({ commentId: comment.id, tag: "To Do" });
+                    }}
+                  >
+                    <Circle className="w-3 h-3 mr-2" />
+                    To Do
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateCommentTag.mutate({ commentId: comment.id, tag: "In Progress" });
+                    }}
+                  >
+                    <ClockIcon className="w-3 h-3 mr-2" />
+                    In Progress
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateCommentTag.mutate({ commentId: comment.id, tag: "Resolved" });
+                    }}
+                  >
+                    <CheckCircle2 className="w-3 h-3 mr-2" />
+                    Resolved
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               {level > 0 && (
                 <span className="text-xs text-gray-500 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
                   Reply

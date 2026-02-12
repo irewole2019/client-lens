@@ -15,7 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { ObjectUploader } from "@/components/ObjectUploader";
-import { X, FileText, Film, Image as ImageIcon, Upload, ArrowRight, ArrowLeft } from "lucide-react";
+import { X, Image as ImageIcon, Upload, ArrowRight, ArrowLeft } from "lucide-react";
 import type { UploadResult } from "@uppy/core";
 
 interface CreateProjectModalProps {
@@ -54,7 +54,7 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
   });
 
   const createProjectMutation = useMutation({
-    mutationFn: async (data: { title: string; files: UploadedFile[] }) => {
+    mutationFn: async (data: { title: string; folderId: string | null; files: UploadedFile[] }) => {
       // Create project first
       const projectResponse = await fetch("/api/projects", {
         method: "POST",
@@ -176,10 +176,8 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
   };
 
   const getFileIcon = (mimeType: string) => {
-    if (mimeType.startsWith("image/")) return <ImageIcon className="h-8 w-8 text-blue-500" />;
-    if (mimeType.startsWith("video/")) return <Film className="h-8 w-8 text-purple-500" />;
-    if (mimeType === "application/pdf") return <FileText className="h-8 w-8 text-red-500" />;
-    return <FileText className="h-8 w-8 text-gray-500" />;
+    // Images only for MVP
+    return <ImageIcon className="h-8 w-8 text-blue-500" />;
   };
 
   const formatFileSize = (size: number) => {
@@ -268,7 +266,7 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
                 <div className="space-y-2">
                   <p className="text-lg font-medium">Upload your project files</p>
                   <p className="text-sm text-muted-foreground">
-                    Support for images, videos, and PDFs
+                    Images only (.jpg, .png, .gif, .webp)
                   </p>
                   <ObjectUploader
                     maxNumberOfFiles={10}

@@ -179,14 +179,11 @@ export function PDFWithComments({
 
         {isPublic && (
           <CommentModal
-            isOpen={showModal}
-            onClose={handleModalClose}
+            open={showModal}
+            onOpenChange={(open) => !open && handleModalClose()}
             fileId={file.id}
-            positionX={newCommentPosition?.x}
-            positionY={newCommentPosition?.y}
-            page={newCommentPosition?.page}
-            existingComment={selectedPinIndex !== null ? allRootComments[selectedPinIndex] : undefined}
-            onSuccess={handleModalClose}
+            xPercent={newCommentPosition?.x}
+            yPercent={newCommentPosition?.y}
           />
         )}
       </div>

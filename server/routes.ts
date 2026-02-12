@@ -311,6 +311,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update a comment (for tag changes)
+  app.patch("/api/comments/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { tag } = req.body;
+      
+      if (!tag || !["To Do", "In Progress", "Resolved"].includes(tag)) {
+        return res.status(400).json({ error: "Invalid tag value" });
+      }
+      
+      const comment = await storage.updateComment(id, { tag });
+      res.json(comment);
+    } catch (error) {
+      console.error("Error updating comment:", error);
+      res.status(500).json({ error: "Failed to update comment" });
+    }
+  });
+
   // Delete a comment
   app.delete("/api/comments/:id", async (req, res) => {
     try {

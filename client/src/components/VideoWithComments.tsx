@@ -181,11 +181,9 @@ export function VideoWithComments({ file, isPublic = false }: VideoWithCommentsP
       )}
 
       <CommentModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
+        open={showModal}
+        onOpenChange={(open) => !open && setShowModal(false)}
         fileId={file.id}
-        timestamp={Math.floor(currentTime)}
-        onSuccess={() => refetch()}
       />
     </div>
   );

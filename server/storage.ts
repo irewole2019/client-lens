@@ -29,6 +29,7 @@ export interface IStorage {
   getComment(id: string): Promise<Comment | undefined>;
   getCommentsByFileId(fileId: string): Promise<Comment[]>;
   createComment(comment: InsertComment): Promise<Comment>;
+  updateComment(id: string, updates: Partial<Comment>): Promise<Comment>;
   deleteComment(id: string): Promise<void>;
   
   getProjectView(userId: string, projectId: string): Promise<ProjectView | undefined>;
@@ -190,6 +191,18 @@ export class DatabaseStorage implements IStorage {
       .insert(comments)
       .values(insertComment)
       .returning();
+    return comment;
+  }
+
+  async updateComment(id: string, updates: Partial<Comment>): Promise<Comment> {
+    const [comment] = await db
+      .update(comments)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(comments.id, id))
+      .returning();
+    if (!comment) {
+      throw new Error("Comment not found");
+    }
     return comment;
   }
 

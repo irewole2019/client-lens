@@ -57,7 +57,7 @@ export function CommentSidebar({ fileId, onCommentClick, highlightedCommentId }:
         onOpenChange={(open) => !open && setReplyTarget(null)}
         fileId={fileId}
         parentId={replyTarget?.id || undefined}
-        replyToComment={replyTarget}
+        replyToComment={replyTarget || undefined}
       />
     </>
   );

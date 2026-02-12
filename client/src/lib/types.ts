@@ -3,6 +3,7 @@ export interface ProjectWithFiles {
   publicId: string;
   title: string;
   userId: string;
+  folderId: string | null;
   createdAt: Date;
   updatedAt: Date;
   fileCount: number;
