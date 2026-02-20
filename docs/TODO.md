@@ -163,6 +163,15 @@ Users organize however they want:
   - Allow accent color customization
   - Display branding on `/p/:publicId` pages
 
+#### 12. Simple 3D Model Viewer (Read-only)
+- **Status**: Not implemented
+- **Effort**: 1-2 days
+- **Tasks**:
+  - Allow uploading `.glb` / `.gltf` files (or enable as a hidden/limited beta)
+  - Add a basic 3D viewer on file pages (orbit controls + loading state)
+  - Start with standard comments (no 3D pin placement)
+  - Add basic limits/guardrails (file size cap, mobile fallback)
+
 ---
 
 ---

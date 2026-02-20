@@ -1,12 +1,32 @@
 import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session";
+import memorystore from "memorystore";
 import path from "path";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+app.set("trust proxy", 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+const MemoryStore = memorystore(session);
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "dev-session-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: app.get("env") === "production",
+    },
+    store: new MemoryStore({
+      checkPeriod: 24 * 60 * 60 * 1000,
+    }),
+  }),
+);
 
 // Serve local images for seeded demo content
 const localImagesDir = path.resolve(import.meta.dirname, "..", "images");

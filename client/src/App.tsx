@@ -8,11 +8,16 @@ import Projects from "@/pages/projects";
 import ProjectDetail from "@/pages/project-detail";
 import PublicProject from "@/pages/public-project";
 import PublicFile from "@/pages/public-file";
+import Landing from "@/pages/landing";
+import Login from "@/pages/login";
+import Register from "@/pages/register";
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Projects} />
+      <Route path="/" component={Landing} />
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
       <Route path="/projects" component={Projects} />
       <Route path="/projects/:id" component={ProjectDetail} />
       <Route path="/p/:publicId" component={PublicProject} />

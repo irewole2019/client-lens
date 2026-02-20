@@ -42,6 +42,10 @@ export class ObjectNotFoundError extends Error {
 export class ObjectStorageService {
   constructor() {}
 
+  private isLocalDev(): boolean {
+    return (process.env.NODE_ENV || "development") === "development";
+  }
+
   // Gets the public object search paths.
   getPublicObjectSearchPaths(): Array<string> {
     const pathsStr = process.env.PUBLIC_OBJECT_SEARCH_PATHS || "";
@@ -132,17 +136,16 @@ export class ObjectStorageService {
 
   // Gets the upload URL for an object entity.
   async getObjectEntityUploadURL(): Promise<string> {
-    const privateObjectDir = this.getPrivateObjectDir();
-    if (!privateObjectDir) {
-      throw new Error(
-        "PRIVATE_OBJECT_DIR not set. Create a bucket in 'Object Storage' " +
-          "tool and set PRIVATE_OBJECT_DIR env var."
-      );
+    const objectId = randomUUID();
+
+    // Local dev fallback: allow uploads without Replit Object Storage.
+    // This keeps local development unblocked on machines without the sidecar.
+    if (this.isLocalDev() && !process.env.PRIVATE_OBJECT_DIR) {
+      return `/api/local-uploads/${objectId}`;
     }
 
-    const objectId = randomUUID();
+    const privateObjectDir = this.getPrivateObjectDir();
     const fullPath = `${privateObjectDir}/uploads/${objectId}`;
-
     const { bucketName, objectName } = parseObjectPath(fullPath);
 
     // Sign URL for PUT method with TTL
@@ -184,6 +187,23 @@ export class ObjectStorageService {
   normalizeObjectEntityPath(
     rawPath: string,
   ): string {
+    // Local dev upload endpoints can return absolute URLs; normalize to a
+    // stable, relative path for storage in the database.
+    if (rawPath.startsWith("http://") || rawPath.startsWith("https://")) {
+      try {
+        const url = new URL(rawPath);
+        if (url.pathname.startsWith("/api/local-uploads/")) {
+          return url.pathname;
+        }
+      } catch {
+        // Ignore URL parse errors; treat as raw path below.
+      }
+    }
+
+    if (rawPath.startsWith("/api/local-uploads/")) {
+      return rawPath;
+    }
+
     if (!rawPath.startsWith("https://storage.googleapis.com/")) {
       return rawPath;
     }

@@ -44,6 +44,9 @@ vite.config.ts.*
 .eslintcache
 .stylelintcache
 
+# Local dev uploads (generated at runtime)
+.local-uploads
+
 # Test coverage
 coverage
 .nyc_output
